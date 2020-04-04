@@ -15,7 +15,8 @@ countries <- c(
   "Belgium",
   "Austria", 
   "Sweden",
-  "Switzerland"
+  "Switzerland",
+  "Russia"
 )
 
 args = commandArgs(trailingOnly=TRUE)
@@ -36,7 +37,7 @@ ifr.by.country$country[ifr.by.country$country == "United Kingdom"] = "United_Kin
 
 serial.interval = read.csv("data/serial_interval.csv")
 covariates = read.csv('data/interventions.csv', stringsAsFactors = FALSE)
-covariates <- covariates[1:11, c(1,2,3,4,5,6, 7, 8)]
+covariates <- covariates[1:12, c(1,2,3,4,5,6, 7, 8)]
 
 ## making all covariates that happen after lockdown to have same date as lockdown
 covariates$schools_universities[covariates$schools_universities > covariates$lockdown] <- covariates$lockdown[covariates$schools_universities > covariates$lockdown]
@@ -51,7 +52,7 @@ forecast = 0
 
 DEBUG = FALSE
 if(DEBUG == FALSE) {
-  N2 = 75 # Increase this for a further forecast
+  N2 = 95 # Increase this for a further forecast
 }  else  {
   ### For faster runs:
   # countries = c("Austria","Belgium") #,Spain")
@@ -203,8 +204,8 @@ m = stan_model(paste0('stan-models/',StanModel,'.stan'))
 if(DEBUG) {
   fit = sampling(m,data=stan_data,iter=40,warmup=20,chains=2)
 } else { 
-  # fit = sampling(m,data=stan_data,iter=4000,warmup=2000,chains=8,thin=4,control = list(adapt_delta = 0.90, max_treedepth = 10))
-  fit = sampling(m,data=stan_data,iter=200,warmup=100,chains=4,thin=4,control = list(adapt_delta = 0.90, max_treedepth = 10))
+  fit = sampling(m,data=stan_data,iter=4000,warmup=2000,chains=8,thin=4,control = list(adapt_delta = 0.90, max_treedepth = 10))
+  #fit = sampling(m,data=stan_data,iter=200,warmup=100,chains=4,thin=4,control = list(adapt_delta = 0.90, max_treedepth = 10))
 }  
 
 out = rstan::extract(fit)
