@@ -13,6 +13,7 @@ library(ggpubr)
 library(bayesplot)
 library(cowplot)
 
+lag<-21
 source("utils/geom-stepribbon.r")
 #---------------------------------------------------------------------------
 make_forecast_plot <- function(){
@@ -27,7 +28,7 @@ make_forecast_plot <- function(){
   
   for(i in 1:12){
     N <- length(dates[[i]])
-    N2 <- N + 7
+    N2 <- N + lag
     country <- countries[[i]]
     
     predicted_cases <- colMeans(prediction[,1:N,i])
@@ -70,9 +71,9 @@ make_forecast_plot <- function(){
                                "rt_max" = rt_ui)
     
     times <- as_date(as.character(dates[[i]]))
-    times_forecast <- times[length(times)] + 0:7
+    times_forecast <- times[length(times)] + 0:lag
     data_country_forecast <- data.frame("time" = times_forecast,
-                                        "country" = rep(country, 8),
+                                        "country" = rep(country, lag+1),
                                         "estimated_deaths_forecast" = estimated_deaths_forecast,
                                         "death_min_forecast" = estimated_deaths_li_forecast,
                                         "death_max_forecast"= estimated_deaths_ui_forecast)
