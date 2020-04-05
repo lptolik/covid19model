@@ -16,7 +16,8 @@ countries <- c(
   "Austria", 
   "Sweden",
   "Switzerland",
-  "Russia"
+  "Russia",
+  "China"
 )
 
 args = commandArgs(trailingOnly=TRUE)
@@ -37,7 +38,7 @@ ifr.by.country$country[ifr.by.country$country == "United Kingdom"] = "United_Kin
 
 serial.interval = read.csv("data/serial_interval.csv")
 covariates = read.csv('data/interventions.csv', stringsAsFactors = FALSE)
-covariates <- covariates[1:12, c(1,2,3,4,5,6, 7, 8)]
+covariates <- covariates[1:13, c(1,2,3,4,5,6, 7, 8)]
 
 ## making all covariates that happen after lockdown to have same date as lockdown
 covariates$schools_universities[covariates$schools_universities > covariates$lockdown] <- covariates$lockdown[covariates$schools_universities > covariates$lockdown]
@@ -52,10 +53,11 @@ forecast = 0
 
 DEBUG = FALSE
 if(DEBUG == FALSE) {
-  N2 = 95 # Increase this for a further forecast
+  N2 = 100 # Increase this for a further forecast
+  #countries = c("China","France","Sweden","Italy",'Russia')#c("Austria","Belgium") #,Spain")
 }  else  {
   ### For faster runs:
-  # countries = c("Austria","Belgium") #,Spain")
+  countries = c("China","France","Sweden","Italy")#c("Austria","Belgium") #,Spain")
   N2 = 75
 }
 # countries = c("Italy","United_Kingdom","Spain","Norway","Austria","Switzerland")
@@ -80,7 +82,7 @@ for(Country in countries) {
   d1=d1[order(d1$t),]
   index = which(d1$Cases>0)[1]
   index1 = which(cumsum(d1$Deaths)>=10)[1] # also 5
-  index2 = index1-30
+  index2 = max(1,(index1-30))
   
   print(sprintf("First non-zero cases is on day %d, and 30 days before 5 days is day %d",index,index2))
   d1=d1[index2:nrow(d1),]
