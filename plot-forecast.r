@@ -13,7 +13,7 @@ library(ggpubr)
 library(bayesplot)
 library(cowplot)
 
-lag<-21
+lagDef<-21
 source("utils/geom-stepribbon.r")
 #---------------------------------------------------------------------------
 make_forecast_plot <- function(){
@@ -26,9 +26,10 @@ make_forecast_plot <- function(){
   data_interventions <- read.csv("data/interventions.csv", 
                                  stringsAsFactors = FALSE)
   
-  for(i in 1:12){
+  for(i in 1:length(countries)){
     N <- length(dates[[i]])
-    N2 <- N + lag
+    N2 <- min(100,(N + lagDef))
+    lag<-N2-N
     country <- countries[[i]]
     
     predicted_cases <- colMeans(prediction[,1:N,i])
