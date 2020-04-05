@@ -26,7 +26,7 @@ make_three_pannel_plot <- function(){
                                  stringsAsFactors = FALSE)
   covariates <- data_interventions[1:12, c(1,2,3,4,5,6, 7, 8)]
   
-  for(i in 1:12){
+  for(i in 1:length(countries)){
     print(i)
     N <- length(dates[[i]])
     country <- countries[[i]]
