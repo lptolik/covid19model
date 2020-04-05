@@ -13,6 +13,7 @@ library(ggpubr)
 library(bayesplot)
 library(cowplot)
 
+Sys.setlocale("LC_TIME", "en_GB.UTF-8")
 source("utils/geom-stepribbon.r")
 #---------------------------------------------------------------------------
 make_three_pannel_plot <- function(){

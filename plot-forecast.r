@@ -13,6 +13,7 @@ library(ggpubr)
 library(bayesplot)
 library(cowplot)
 
+Sys.setlocale("LC_TIME", "en_GB.UTF-8")
 lagDef<-21
 source("utils/geom-stepribbon.r")
 #---------------------------------------------------------------------------
