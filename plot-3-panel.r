@@ -23,14 +23,15 @@ make_three_pannel_plot <- function(){
   filename2 <- args[1]
   load(paste0("results/", filename2))
   print(sprintf("loading: %s",paste0("results/",filename2)))
-  data_interventions <- read.csv("data/interventions.csv", 
-                                 stringsAsFactors = FALSE)
-  covariates <- data_interventions[1:12, c(1,2,3,4,5,6, 7, 8)]
+  # data_interventions <- read.csv("data/interventions.csv", 
+  #                                stringsAsFactors = FALSE)
+  # covariates <- data_interventions[1:12, c(1,2,3,4,5,6, 7, 8)]
   
   for(i in 1:length(countries)){
     print(i)
     N <- length(dates[[i]])
     country <- countries[[i]]
+    cdate<-dates[[i]][N]
     
     predicted_cases <- colMeans(prediction[,1:N,i])
     predicted_cases_li <- colQuantiles(prediction[,1:N,i], probs=.025)
