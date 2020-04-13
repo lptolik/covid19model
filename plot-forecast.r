@@ -29,7 +29,7 @@ make_forecast_plot <- function(){
   
   for(i in 1:length(countries)){
     N <- length(dates[[i]])
-    N2 <- min(100,(N + lagDef))
+    N2 <- min(dim(prediction)[2],(N + lagDef))
     lag<-N2-N
     country <- countries[[i]]
     
@@ -91,17 +91,25 @@ make_forecast_plot <- function(){
 make_single_plot <- function(data_country, data_country_forecast, filename, country){
   
   data_deaths <- data_country %>%
-    select(time, deaths, estimated_deaths) %>%
+    select(time, deaths) %>%
     gather("key" = key, "value" = value, -time)
   
-  data_deaths_forecast <- data_country_forecast %>%
+  data_estimated_deaths <- data_country %>%
+    select(time, estimated_deaths) %>%
+    gather("key" = key, "value" = value, -time)
+
+    data_deaths_forecast <- data_country_forecast %>%
     select(time, estimated_deaths_forecast) %>%
     gather("key" = key, "value" = value, -time)
   
   # Force less than 1 case to zero
   data_deaths$value[data_deaths$value < 1] <- NA
   data_deaths_forecast$value[data_deaths_forecast$value < 1] <- NA
-  data_deaths_all <- rbind(data_deaths, data_deaths_forecast)
+  data_deaths_all <- rbind(data_estimated_deaths, data_deaths_forecast)
+  which.max(data_deaths_all$value)->peak_pos
+  peak_death<-data_deaths_all[peak_pos,]
+  data_deaths_all <- rbind(data_deaths,data_deaths_all)
+  
   
   p <- ggplot(data_country) +
     geom_bar(data = data_country, aes(x = time, y = deaths), 
@@ -122,6 +130,8 @@ make_single_plot <- function(data_country, data_country_forecast, filename, coun
                 fill = "black", alpha=0.35) +
     geom_vline(xintercept = data_deaths$time[length(data_deaths$time)], 
                col = "black", linetype = "dashed", alpha = 0.5) + 
+    geom_vline(xintercept = peak_death$time, 
+               col = "red", linetype = "solid", alpha = 0.5) + 
     #scale_fill_manual(name = "", 
     #                 labels = c("Confirmed deaths", "Predicted deaths"),
     #                 values = c("coral4", "deepskyblue4")) + 
@@ -133,6 +143,12 @@ make_single_plot <- function(data_country, data_country_forecast, filename, coun
     theme_pubr() + 
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
     guides(fill=guide_legend(ncol=1, reverse = TRUE)) + 
+    annotate(geom="text", x=peak_death$time-8, 
+             y=1000, label="Peak",
+             color="red")+ 
+    annotate(geom="text", x=peak_death$time-8, 
+             y=700, label=format(peak_death$time,"%e %b"),
+             color="red")+ 
     annotate(geom="text", x=data_country$time[length(data_country$time)]+8, 
              y=10000, label="Forecast",
              color="black")
